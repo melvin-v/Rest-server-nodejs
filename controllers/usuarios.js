@@ -3,11 +3,13 @@ import { UsuarioSchema } from "../models/usuario.js";
 import bcryptjs from "bcryptjs";
 
 const usuariosGet = async (req, res = response) => {
-  const {limite = 2, desde = 0} = req.query;
-  const usuarios = UsuarioSchema.find({estado:true}).skip(desde).limit(limite);
-  const total = UsuarioSchema.countDocuments({estado:true});
-  const resp =  await Promise.all([usuarios, total])
-  res.json({resp });
+  const { limite = 2, desde = 0 } = req.query;
+  const usuarios = UsuarioSchema.find({ estado: true })
+    .skip(desde)
+    .limit(limite);
+  const total = UsuarioSchema.countDocuments({ estado: true });
+  const resp = await Promise.all([usuarios, total]);
+  res.json({ resp });
 };
 
 const usuariosPut = async (req, res = response) => {
@@ -22,7 +24,7 @@ const usuariosPut = async (req, res = response) => {
     resto.password = bcryptjs.hashSync(password, salt);
   }
   const usuario = await UsuarioSchema.findByIdAndUpdate(id, resto);
-  res.json({id });
+  res.json({ id });
 };
 
 const usuariosPost = async (req, res = response) => {
@@ -38,15 +40,11 @@ const usuariosPost = async (req, res = response) => {
 };
 
 const usuariosDelete = async (req, res = response) => {
-  const {id} = req.params;
-  const usuario = await UsuarioSchema.findByIdAndUpdate(id, {estado:false})
-  res.json({usuario});
+  const { id } = req.params;
+  const uid = req.uid;
+  const usuario = await UsuarioSchema.findByIdAndUpdate(id, { estado: false });
+  const u = req.usuario;
+  res.json({ usuario, u });
 };
 
-
-export {
-  usuariosGet,
-  usuariosPut,
-  usuariosPost,
-  usuariosDelete,
-};
+export { usuariosGet, usuariosPut, usuariosPost, usuariosDelete };

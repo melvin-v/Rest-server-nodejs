@@ -6,12 +6,14 @@ import {
   usuariosPut,
 } from "../controllers/usuarios.js";
 import { check } from "express-validator";
-import { validarCampos } from "../middlewares/validar-campos.js";
+
 import {
   esRoleValido,
   existeEmail,
   existeUsuario,
 } from "../helpers/db-validators.js";
+
+import {validarCampos, validarJWT, esAdminRole, tieneRol} from '../middlewares/index.js'
 
 const router = Router();
 
@@ -43,6 +45,9 @@ router.post(
 router.delete(
   "/:id",
   [
+    validarJWT,
+    tieneRol('ADMIN_ROLE', 'VENTAS_ROLE'),
+    esAdminRole,
     check("id", "No es un ID valido").isMongoId(),
     check("id").custom(existeUsuario),
   ],
